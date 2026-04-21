@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>myVicRoads</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --green:#3a8c3f;
+  --green-light:#c8e6c9;
+  --navy:#1d2d44;
+  --red:#cc2200;
+  --text:#111;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --bg:#e8eaed;
+  --white:#fff;
+}
+html,body{height:100%;overflow:hidden;background:#111;}
+body{font-family:'Inter',-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;}
+
+/* ── PHONE SHELL ── */
+.phone{
+  width:393px;height:852px;
+  background:var(--white);
+  border-radius:48px;
+  overflow:hidden;
+  position:relative;
+  display:flex;flex-direction:column;
+  box-shadow:0 40px 120px rgba(0,0,0,.8);
+}
+@media(max-width:420px){
+  body{background:var(--white);align-items:flex-start;}
+  .phone{width:100vw;height:100vh;border-radius:0;box-shadow:none;}
+}
+
+/* ── STATUS BAR ── */
+.sb{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 28px 4px;flex-shrink:0;
+  font-size:15px;font-weight:700;
+  background:var(--white);
+}
+.sb.dark{background:var(--red);color:var(--white);}
+.sb.grey{background:var(--bg);}
+.sb-icons{display:flex;gap:5px;align-items:center;}
+.sb-icons svg{width:16px;height:11px;}
+
+/* ── SCREENS ── */
+.page{display:none;flex-direction:column;flex:1;overflow:hidden;}
+.page.on{display:flex;}
+
+/* ════════════════════════════
+   PIN SCREEN
+════════════════════════════ */
+#pg-pin{background:var(--white);}
+.pin-wrap{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;
+  padding:30px 40px 10px;
+}
+.pin-padlock{
+  width:90px;height:90px;margin:20px 0 30px;
+  display:flex;align-items:center;justify-content:center;
+}
+.pin-padlock svg{width:90px;height:90px;}
+.pin-title{font-size:22px;font-weight:800;color:var(--text);text-align:center;margin-bottom:28px;line-height:1.3;}
+.pin-dots{display:flex;gap:20px;margin-bottom:40px;}
+.dot{
+  width:18px;height:18px;border-radius:50%;
+  border:2px solid #bbb;background:transparent;
+  transition:background .15s,border-color .15s;
+}
+.dot.on{background:var(--text);border-color:var(--text);}
+.pin-grid{
+  width:100%;display:grid;
+  grid-template-columns:repeat(3,1fr);
+}
+.pk{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:14px 0;
+  font-size:32px;font-weight:300;color:var(--text);
+  border:none;background:none;font-family:inherit;cursor:pointer;
+  user-select:none;
+}
+.pk:active{opacity:.4;}
+.pk .lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--text);margin-top:2px;min-height:12px;}
+.pk.del{font-size:14px;color:var(--text);}
+.pk.forgot{font-size:14px;color:var(--text);font-weight:500;}
+.pk.empty{cursor:default;}
+
+/* ════════════════════════════
+   HOME SCREEN
+════════════════════════════ */
+#pg-home{background:var(--bg);}
+.home-header{
+  background:var(--bg);
+  padding:14px 20px 10px;
+  display:flex;align-items:center;gap:10px;
+  flex-shrink:0;
+}
+.vr-logo-mark{
+  width:38px;height:38px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.home-hi{font-size:20px;font-weight:700;color:var(--text);}
+.home-scroll{flex:1;overflow-y:auto;padding:0 14px 14px;}
+.home-scroll::-webkit-scrollbar{display:none;}
+.home-tile{
+  background:var(--white);border-radius:14px;
+  padding:20px 18px;margin-bottom:10px;
+  cursor:pointer;display:flex;align-items:flex-start;flex-direction:column;gap:6px;
+}
+.home-tile:active{background:#f5f5f5;}
+.tile-icon{width:36px;height:28px;margin-bottom:4px;}
+.tile-label{font-size:18px;font-weight:700;color:var(--text);}
+.my-licence-banner{
+  background:var(--navy);border-radius:14px;
+  padding:22px 20px;margin-bottom:10px;
+  cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;
+}
+.my-licence-banner:active{opacity:.85;}
+.banner-text h3{color:var(--white);font-size:20px;font-weight:700;}
+.banner-text p{color:rgba(255,255,255,.65);font-size:14px;margin-top:3px;}
+.banner-expand{color:var(--white);font-size:20px;}
+
+/* Bottom Nav */
+.bot-nav{
+  background:var(--white);border-top:1px solid var(--border);
+  display:flex;flex-shrink:0;padding-bottom:10px;
+}
+.bn{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:8px 4px 0;
+  border:none;background:none;font-family:inherit;
+  font-size:11px;font-weight:500;color:#8e8e93;cursor:pointer;
+}
+.bn svg{width:24px;height:24px;}
+.bn.on{color:var(--green);}
+
+/* ════════════════════════════
+   DEMERIT SCREEN
+════════════════════════════ */
+#pg-demerit{background:var(--white);}
+.sub-header{
+  background:var(--white);padding:12px 20px;
+  display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.back-btn{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text);padding:2px 6px 2px 0;}
+.sub-header h2{font-size:18px;font-weight:700;}
+.demerit-body{flex:1;overflow-y:auto;padding:16px;}
+.demerit-body::-webkit-scrollbar{display:none;}
+.demerits-card{
+  background:var(--green);border-radius:14px;padding:22px 20px;margin-bottom:14px;
+}
+.demerits-card .dc-label{color:rgba(255,255,255,.85);font-size:15px;margin-bottom:6px;}
+.demerits-card .dc-num{color:var(--white);font-size:52px;font-weight:300;line-height:1;}
+.demerits-card .dc-slash{color:rgba(255,255,255,.7);font-size:28px;margin-left:4px;}
+.demerits-card .dc-sub{color:rgba(255,255,255,.8);font-size:14px;margin-top:6px;}
+.info-card{
+  background:#f3f4f6;border-radius:14px;padding:18px 18px;margin-bottom:12px;
+}
+.info-card h3{font-size:16px;font-weight:700;margin-bottom:8px;}
+.info-card p{font-size:14px;color:#374151;line-height:1.6;}
+
+/* ════════════════════════════
+   LICENCE SCREEN  
+════════════════════════════ */
+#pg-licence{background:var(--white);}
+.lic-view-header{
+  background:var(--white);padding:10px 20px 6px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.lic-view-header .back-btn{color:var(--text);}
+.lic-view-header h2{font-size:17px;font-weight:700;position:absolute;left:50%;transform:translateX(-50%);}
+.lic-refresh{
+  text-align:center;font-size:12px;color:var(--muted);
+  padding:5px 0;background:var(--white);flex-shrink:0;
+  border-bottom:1px solid var(--border);
+}
+.lic-scroll{flex:1;overflow-y:auto;}
+.lic-scroll::-webkit-scrollbar{display:none;}
+
+/* Red header banner */
+.lic-red{
+  background:var(--red);padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.lic-red-title{color:var(--white);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.2px;}
+.lic-red-sub{color:rgba(255,255,255,.85);font-size:12px;margin-top:2px;}
+.vr-wordmark{
+  color:var(--white);font-size:17px;font-weight:900;font-style:italic;
+  display:flex;align-items:center;letter-spacing:-1px;
+}
+.vr-wordmark .slash{margin-right:1px;font-size:20px;}
+
+/* Green photo + QR area */
+.lic-green-area{
+  background:#b8dbb8;padding:14px 14px 12px;
+  display:flex;gap:12px;align-items:stretch;
+  position:relative;flex-shrink:0;
+}
+.lic-green-area::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(-45deg,transparent,transparent 10px,rgba(255,255,255,.06) 10px,rgba(255,255,255,.06) 11px);
+  pointer-events:none;
+}
+.lic-photo-wrap{
+  width:48%;flex-shrink:0;
+  background:rgba(0,0,0,.05);border-radius:6px;
+  overflow:hidden;position:relative;z-index:1;min-height:160px;
+  display:flex;align-items:center;justify-content:center;
+}
+.lic-photo-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.lic-photo-placeholder{font-size:56px;color:rgba(0,0,0,.2);}
+
+/* Victoria watermark overlays */
+.vic-watermarks{
+  position:absolute;inset:0;pointer-events:none;z-index:2;
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  gap:0;overflow:hidden;
+}
+.vic-wm{
+  opacity:.18;width:60px;height:60px;flex-shrink:0;
+}
+
+/* QR consent panel */
+.qr-panel{
+  flex:1;background:var(--white);border-radius:10px;
+  padding:12px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:8px;position:relative;z-index:1;
+}
+.qr-panel p{font-size:12px;color:var(--text);text-align:center;line-height:1.5;}
+.qr-panel .consent-q{font-size:13px;font-weight:700;text-align:center;}
+.reveal-btn{
+  background:var(--navy);color:var(--white);
+  border:none;border-radius:24px;
+  padding:10px 16px;font-size:13px;font-weight:700;
+  font-family:inherit;cursor:pointer;width:100%;
+}
+.reveal-btn:active{opacity:.8;}
+
+/* QR code shown state */
+.qr-code-box{display:flex;flex-direction:column;align-items:center;gap:4px;}
+#qr-mini{width:100px;height:100px;}
+.qr-exp{font-size:11px;font-weight:700;color:var(--text);}
+
+/* Segment tabs */
+.seg-row{
+  padding:10px 16px;background:var(--white);flex-shrink:0;
+  border-bottom:1px solid var(--border);
+}
+.seg-inner{
+  background:#e4e4ea;border-radius:10px;padding:2px;display:flex;
+}
+.seg-btn{
+  flex:1;padding:8px 4px;
+  border:none;border-radius:8px;font-family:inherit;
+  font-size:14px;font-weight:500;background:transparent;color:var(--muted);cursor:pointer;
+  transition:all .2s;
+}
+.seg-btn.on{background:var(--navy);color:var(--white);font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+
+/* Tab content */
+.tab-body{padding:0 20px;background:var(--white);}
+.big-name{font-size:26px;font-weight:900;padding:18px 0 14px;border-bottom:1px solid var(--border);}
+.info-2col{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:14px 0;border-bottom:1px solid var(--border);}
+.ifield .lbl{font-size:13px;color:var(--muted);margin-bottom:3px;}
+.ifield .val{font-size:16px;font-weight:700;display:flex;align-items:center;gap:6px;}
+.p-badge{background:var(--red);color:var(--white);font-size:11px;font-weight:900;padding:2px 7px;border-radius:3px;}
+.addr-row{padding:14px 0;border-bottom:1px solid var(--border);}
+.addr-row .lbl{font-size:13px;color:var(--muted);margin-bottom:4px;}
+.addr-row .val{font-size:16px;font-weight:700;line-height:1.5;}
+.sig-row{padding:14px 0;border-bottom:1px solid var(--border);}
+.sig-row .lbl{font-size:13px;color:var(--muted);margin-bottom:8px;}
+.sig-row img{max-height:52px;}
+.sig-row .nosig{color:#ccc;font-size:13px;font-style:italic;}
+
+.sec-divider{
+  background:#f3f4f6;padding:10px 20px;
+  font-size:14px;font-weight:600;color:#4b5563;
+  flex-shrink:0;
+}
+.detail-row{
+  padding:14px 20px;border-bottom:1px solid var(--border);
+  background:var(--white);
+}
+.detail-row .lbl{font-size:13px;color:var(--muted);margin-bottom:5px;}
+.detail-row .val{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.green-check-badge{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--green);color:var(--white);
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
+}
+.p-big-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;background:var(--red);border-radius:4px;
+  color:var(--white);font-size:14px;font-weight:900;
+}
+
+/* Card number row */
+.cardnum-row{display:flex;align-items:center;justify-content:space-between;}
+.eye-btn{background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);}
+
+/* Barcode */
+.barcode-section{padding:14px 20px 20px;background:var(--white);border-bottom:1px solid var(--border);}
+.barcode-section .lbl{font-size:13px;color:var(--muted);margin-bottom:10px;}
+.barcode-box{
+  border:1px solid var(--border);border-radius:10px;padding:14px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.barcode-svg-wrap{flex:1;height:58px;overflow:hidden;}
+.expand-ico{font-size:16px;color:var(--muted);margin-left:10px;cursor:pointer;}
+
+/* Age tab */
+.age-body{padding:20px;}
+.age-lbl{font-size:14px;color:var(--muted);margin-bottom:10px;}
+.age-status{display:flex;align-items:center;gap:10px;}
+.age-status .green-check-badge{width:32px;height:32px;font-size:16px;}
+.age-status span{font-size:20px;font-weight:800;}
+
+/* ════════════════════════════
+   ADMIN / PROFILE SCREEN
+════════════════════════════ */
+#pg-admin{background:#f2f2f7;}
+.admin-scroll{flex:1;overflow-y:auto;}
+.admin-scroll::-webkit-scrollbar{display:none;}
+.admin-top-bar{
+  background:var(--white);padding:12px 20px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.admin-top-bar h2{font-size:18px;font-weight:700;}
+.admin-group{background:var(--white);margin-top:14px;}
+.ag-title{
+  padding:10px 16px 6px;font-size:12px;font-weight:700;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.7px;
+  border-bottom:1px solid var(--border);
+}
+.af{padding:0 16px;border-bottom:1px solid var(--border);}
+.af:last-child{border-bottom:none;}
+.af label{display:block;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding-top:10px;}
+.af input,.af select{
+  width:100%;padding:5px 0 10px;border:none;outline:none;
+  font-size:15px;font-family:inherit;color:var(--text);background:transparent;
+}
+.upload-row{
+  padding:13px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.upload-row:last-child{border-bottom:none;}
+.ur-left{display:flex;align-items:center;gap:10px;}
+.ur-thumb{width:40px;height:40px;border-radius:6px;object-fit:cover;}
+.ur-sig{height:28px;max-width:80px;}
+.ur-placeholder{width:40px;height:40px;border-radius:6px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.ur-text .ut-title{font-size:15px;font-weight:500;}
+.ur-text .ut-sub{font-size:12px;color:var(--muted);}
+.ul-btn{
+  background:#e8f5ee;color:var(--green);border:none;border-radius:8px;
+  padding:8px 14px;font-size:13px;font-weight:600;font-family:inherit;
+  cursor:pointer;position:relative;overflow:hidden;flex-shrink:0;
+}
+.ul-btn input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0;}
+.save-btn{
+  margin:16px 16px 24px;display:block;width:calc(100% - 32px);
+  padding:16px;background:var(--green);color:var(--white);
+  border:none;border-radius:12px;font-size:16px;font-weight:700;
+  font-family:inherit;cursor:pointer;
+}
+.save-btn:active{background:#2e7031;}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
+  background:#111;color:#fff;padding:12px 22px;border-radius:24px;
+  font-size:14px;font-weight:600;opacity:0;pointer-events:none;
+  transition:opacity .3s;white-space:nowrap;z-index:9999;
+}
+.toast.show{opacity:1;}
+
+/* ════ QR FULL PAGE ════ */
+#pg-qr{background:var(--white);}
+.qr-full-header{
+  padding:14px 20px 10px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.qr-full-header h2{font-size:18px;font-weight:700;}
+.qr-close{background:none;border:none;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;color:var(--text);}
+.qr-full-scroll{flex:1;overflow-y:auto;padding:24px 28px;}
+.qr-full-scroll::-webkit-scrollbar{display:none;}
+.qr-full-frame{
+  border:1.5px solid var(--border);border-radius:16px;
+  padding:18px;width:100%;aspect-ratio:1;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:16px;
+}
+#qr-full-canvas{width:100%!important;height:auto!important;}
+.qr-big-timer{font-size:22px;font-weight:800;text-align:center;margin-bottom:20px;}
+.qr-consent-text{font-size:14px;line-height:1.65;color:var(--text);margin-bottom:16px;}
+.qr-sharing h3{font-size:15px;font-weight:700;margin-bottom:8px;}
+.qr-sharing li{font-size:14px;list-style:none;margin-bottom:5px;}
+.qr-sharing li::before{content:"· ";}
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+
+<!-- STATUS BAR (shared, updated per page) -->
+<div class="sb" id="status-bar">
+  <span id="sb-time">9:41</span>
+  <div class="sb-icons">
+    <svg viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="1" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1"/></svg>
+    <span style="font-size:13px;font-weight:700;">5G</span>
+    <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x=".5" y=".5" width="21" height="12" rx="3.5" stroke="currentColor" stroke-opacity=".35"/><rect x="1.5" y="1.5" width="15" height="10" rx="2.5" fill="currentColor"/><path d="M23.5 4.5v4a2 2 0 000-4z" fill="currentColor" fill-opacity=".4"/></svg>
+  </div>
+</div>
+
+<!-- ══ PIN ══ -->
+<div class="page on" id="pg-pin">
+  <div class="pin-wrap">
+    <div class="pin-padlock">
+      <!-- Green padlock matching screenshot exactly -->
+      <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="12" y="42" width="66" height="44" rx="8" fill="#3a8c3f"/>
+        <rect x="12" y="42" width="66" height="44" rx="8" fill="#3a8c3f"/>
+        <path d="M29 42V30C29 20.059 36.059 13 45 13C53.941 13 61 20.059 61 30V42" stroke="#3a8c3f" stroke-width="9" stroke-linecap="round" fill="none"/>
+        <!-- keyhole -->
+        <ellipse cx="45" cy="60" rx="8" ry="8" fill="#1a2744"/>
+        <rect x="41.5" y="60" width="7" height="12" rx="3.5" fill="#1a2744"/>
+      </svg>
+    </div>
+    <div class="pin-title">Please enter your existing PIN code</div>
+    <div class="pin-dots">
+      <div class="dot" id="dot0"></div>
+      <div class="dot" id="dot1"></div>
+      <div class="dot" id="dot2"></div>
+      <div class="dot" id="dot3"></div>
+      <div class="dot" id="dot4"></div>
+      <div class="dot" id="dot5"></div>
+    </div>
+    <div class="pin-grid">
+      <button class="pk" onclick="pp('1')">1<span class="lbl"></span></button>
+      <button class="pk" onclick="pp('2')">2<span class="lbl">ABC</span></button>
+      <button class="pk" onclick="pp('3')">3<span class="lbl">DEF</span></button>
+      <button class="pk" onclick="pp('4')">4<span class="lbl">GHI</span></button>
+      <button class="pk" onclick="pp('5')">5<span class="lbl">JKL</span></button>
+      <button class="pk" onclick="pp('6')">6<span class="lbl">MNO</span></button>
+      <button class="pk" onclick="pp('7')">7<span class="lbl">PQRS</span></button>
+      <button class="pk" onclick="pp('8')">8<span class="lbl">TUV</span></button>
+      <button class="pk" onclick="pp('9')">9<span class="lbl">WXYZ</span></button>
+      <button class="pk forgot">Forgot?</button>
+      <button class="pk" onclick="pp('0')">0<span class="lbl"></span></button>
+      <button class="pk del" onclick="pd()">
+        <svg width="26" height="20" viewBox="0 0 26 20" fill="none"><path d="M10 1H24C24.55 1 25 1.45 25 2V18C25 18.55 24.55 19 24 19H10L1 10L10 1Z" stroke="currentColor" stroke-width="1.8"/><line x1="13" y1="7" x2="21" y2="15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="21" y1="7" x2="13" y2="15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HOME ══ -->
+<div class="page" id="pg-home">
+  <div class="home-header">
+    <!-- VicRoads logo mark - matches the app icon in screenshot -->
+    <div class="vr-logo-mark" onclick="goAdmin()">
+      <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 19L19 4L34 19" stroke="#3a8c3f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 19L19 34L34 19" stroke="#1a2744" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>
+        <circle cx="19" cy="19" r="4" fill="#3a8c3f"/>
+      </svg>
+    </div>
+    <div class="home-hi" id="home-greeting">Hi there</div>
+  </div>
+  <div class="home-scroll">
+    <!-- Demerit points -->
+    <div class="home-tile" onclick="goDemerit()">
+      <!-- Demerit icon: gauge/dial like screenshot -->
+      <div class="tile-icon">
+        <svg viewBox="0 0 36 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="2" y1="24" x2="34" y2="24" stroke="#1a2744" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="18" cy="24" r="4" fill="#1a2744"/>
+          <circle cx="18" cy="24" r="2" fill="#3a8c3f"/>
+          <line x1="18" y1="20" x2="10" y2="10" stroke="#1a2744" stroke-width="2" stroke-linecap="round"/>
+          <line x1="6" y1="22" x2="10" y2="16" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="30" y1="22" x2="26" y2="16" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- green tick on right -->
+          <path d="M26 8 L29 11 L34 5" stroke="#3a8c3f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="tile-label">Demerit points balance</div>
+    </div>
+    <!-- Registered vehicles -->
+    <div class="home-tile" onclick="goRego()">
+      <div class="tile-icon">
+        <svg viewBox="0 0 40 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="8" width="30" height="14" rx="3" stroke="#1a2744" stroke-width="2" fill="none"/>
+          <path d="M5 8L8 2H22L26 8" stroke="#1a2744" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="8" cy="22" r="4" fill="#1a2744"/>
+          <circle cx="24" cy="22" r="4" fill="#1a2744"/>
+          <circle cx="8" cy="22" r="2" fill="white"/>
+          <circle cx="24" cy="22" r="2" fill="white"/>
+          <!-- green checkmark -->
+          <path d="M32 10 L35 14 L40 7" stroke="#3a8c3f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="tile-label">Registered vehicles</div>
+    </div>
+    <!-- My licence banner -->
+    <div class="my-licence-banner" onclick="goLicence()">
+      <div class="banner-text">
+        <h3>My licence</h3>
+        <p>Tap to view licence</p>
+      </div>
+      <div class="banner-expand">⤢</div>
+    </div>
+  </div>
+  <div class="bot-nav">
+    <button class="bn on" id="bn-home" onclick="goBotNav('home')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      Home
+    </button>
+    <button class="bn" id="bn-vehicles" onclick="goRego()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      Vehicles
+    </button>
+    <button class="bn" id="bn-licence" onclick="goLicence()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4M14 15h4"/></svg>
+      Licence
+    </button>
+    <button class="bn" id="bn-payments">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v2m0 8v2M9 12h6M9 10s.5-2 3-2 3 2 3 2-1 2-3 2-3 2-3 2 .5 2 3 2 3-2 3-2"/></svg>
+      Payments
+    </button>
+    <button class="bn" id="bn-profile" onclick="goAdmin()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Profile
+    </button>
+  </div>
+</div>
+
+<!-- ══ DEMERIT ══ -->
+<div class="page" id="pg-demerit">
+  <div class="sub-header">
+    <button class="back-btn" onclick="goBack('pg-home')">‹</button>
+    <h2>Demerit points</h2>
+  </div>
+  <div class="demerit-body">
+    <div class="demerits-card">
+      <div class="dc-label">Current Balance</div>
+      <div style="display:flex;align-items:baseline;gap:4px;">
+        <div class="dc-num" id="demerit-count">2</div>
+        <div class="dc-slash">/ 12</div>
+      </div>
+      <div class="dc-sub">demerit points</div>
+    </div>
+    <div class="info-card">
+      <h3>Information</h3>
+      <p>Demerit points are recorded against your licence when you commit certain driving offences. If you accumulate too many points, your licence may be suspended.</p>
+    </div>
+    <div class="info-card" style="background:white;border:1px solid var(--border);">
+      <h3>Good driving record</h3>
+      <p id="demerit-msg">You currently have 2 demerit points. Keep up the safe driving!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LICENCE VIEW ══ -->
+<div class="page" id="pg-licence">
+  <div class="lic-view-header" style="position:relative;">
+    <button class="back-btn" onclick="goBack('pg-home')">‹</button>
+    <h2>View details</h2>
+    <div style="width:40px;"></div>
+  </div>
+  <div class="lic-refresh" id="lic-refresh-time">Last refreshed: loading...</div>
+  <div class="lic-scroll" id="lic-scroll" onscroll="handleLicScroll(this)">
+    <!-- Red header -->
+    <div class="lic-red">
+      <div>
+        <div class="lic-red-title" id="lic-red-title">PROBATIONARY DRIVER LICENCE</div>
+        <div class="lic-red-sub">Victoria Australia</div>
+      </div>
+      <div class="vr-wordmark"><span class="slash">↘</span>vicroads</div>
+    </div>
+    <!-- Green photo + QR area -->
+    <div class="lic-green-area">
+      <div class="lic-photo-wrap" id="lic-photo-wrap">
+        <div class="lic-photo-placeholder" id="lic-photo-placeholder">👤</div>
+        <!-- Victoria watermarks -->
+        <div class="vic-watermarks" id="vic-watermarks">
+          <!-- SVG crests will be injected -->
+        </div>
+      </div>
+      <div class="qr-panel" id="qr-panel">
+        <p>Presenting a QR code allows your driver licence information to be scanned and shared.</p>
+        <p class="consent-q">Do you consent to share your information?</p>
+        <button class="reveal-btn" onclick="revealQR()">Reveal QR code</button>
+      </div>
+    </div>
+    <!-- Segment -->
+    <div class="seg-row">
+      <div class="seg-inner">
+        <button class="seg-btn on" id="seg-permit" onclick="switchSeg('permit')">Permit</button>
+        <button class="seg-btn" id="seg-identity" onclick="switchSeg('identity')">Identity</button>
+        <button class="seg-btn" id="seg-age" onclick="switchSeg('age')">Age</button>
+      </div>
+    </div>
+    <!-- Tab bodies -->
+    <div id="tab-permit">
+      <div class="tab-body">
+        <div class="big-name" id="tb-name">—</div>
+        <div class="info-2col">
+          <div class="ifield"><div class="lbl">Permit number</div><div class="val" id="tb-permitno">—</div></div>
+          <div class="ifield"><div class="lbl">Expiry</div><div class="val" id="tb-expiry">—</div></div>
+          <div class="ifield"><div class="lbl">Permit type</div><div class="val" id="tb-type">Car <span class="p-badge">P</span></div></div>
+          <div class="ifield"><div class="lbl">Date of birth</div><div class="val" id="tb-dob">—</div></div>
+        </div>
+        <div class="addr-row">
+          <div class="lbl">Address</div>
+          <div class="val" id="tb-addr">—</div>
+        </div>
+        <div class="sig-row">
+          <div class="lbl">Signature</div>
+          <div id="tb-sig-wrap"><span class="nosig">No signature uploaded</span></div>
+        </div>
+      </div>
+      <div class="sec-divider">Car learner permit details</div>
+      <div class="detail-row">
+        <div class="lbl">Permit status</div>
+        <div class="val"><span class="green-check-badge">✓</span> Current</div>
+      </div>
+      <div class="detail-row">
+        <div class="lbl">Proficiency</div>
+        <div class="val"><span class="p-big-badge">P</span> <span id="tb-proficiency">Probationary</span></div>
+      </div>
+      <div class="detail-row">
+        <div class="lbl">Issue date</div>
+        <div class="val" id="tb-issuedate">—</div>
+      </div>
+      <div class="detail-row">
+        <div class="lbl">Expiry</div>
+        <div class="val" id="tb-expiry2">—</div>
+      </div>
+      <div class="sec-divider">Other details</div>
+      <div class="detail-row">
+        <div class="lbl">Card number</div>
+        <div class="cardnum-row">
+          <div class="val" id="tb-cardnum" style="font-family:monospace;letter-spacing:2px;">*******</div>
+          <button class="eye-btn" onclick="toggleCardNum()">👁</button>
+        </div>
+      </div>
+      <div class="barcode-section">
+        <div class="lbl">Victoria Police barcode</div>
+        <div class="barcode-box">
+          <div class="barcode-svg-wrap">
+            <svg width="100%" height="58" viewBox="0 0 320 58" xmlns="http://www.w3.org/2000/svg" id="barcode-svg"></svg>
+          </div>
+          <span class="expand-ico">⤢</span>
+        </div>
+      </div>
+      <div style="height:30px;"></div>
+    </div>
+    <div id="tab-identity" style="display:none;">
+      <div class="tab-body">
+        <div class="big-name" id="ti-name">—</div>
+        <div class="addr-row">
+          <div class="lbl">Address</div>
+          <div class="val" id="ti-addr">—</div>
+        </div>
+        <div class="sig-row">
+          <div class="lbl">Signature</div>
+          <div id="ti-sig-wrap"><span class="nosig">No signature uploaded</span></div>
+        </div>
+      </div>
+      <div style="height:30px;"></div>
+    </div>
+    <div id="tab-age" style="display:none;">
+      <div class="age-body">
+        <div class="age-lbl">Age status</div>
+        <div class="age-status">
+          <div class="green-check-badge" style="width:32px;height:32px;font-size:16px;">✓</div>
+          <span id="age-label">Over 18</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QR FULL ══ -->
+<div class="page" id="pg-qr">
+  <div class="qr-full-header">
+    <h2>Verify Licence</h2>
+    <button class="qr-close" onclick="closeQR()">Close</button>
+  </div>
+  <div class="qr-full-scroll">
+    <div class="qr-full-frame">
+      <canvas id="qr-full-canvas" width="260" height="260"></canvas>
+    </div>
+    <div class="qr-big-timer">QR expires <span id="qr-timer-big">01:44</span></div>
+    <div class="qr-consent-text">By presenting this QR code you <strong>consent</strong> to share some or all of your driver licence information, including with scanners, venues and law enforcement agencies. They may retain your information in accordance with their business practices and legal requirements.</div>
+    <div class="qr-sharing">
+      <h3>You're sharing:</h3>
+      <ul>
+        <li>Victorian driver licence photo</li>
+        <li>Full name, birth date and address</li>
+        <li>Licence number, type and expiry date</li>
+        <li>Licence status</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REGO ══ -->
+<div class="page" id="pg-rego">
+  <div class="sub-header">
+    <button class="back-btn" onclick="goBack('pg-home')">‹</button>
+    <h2>Registered vehicles</h2>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:16px;">
+    <div style="background:white;border-radius:14px;overflow:hidden;">
+      <div style="background:var(--navy);padding:16px 18px;">
+        <div style="color:rgba(255,255,255,.7);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Plate</div>
+        <div style="color:white;font-size:28px;font-weight:900;" id="rego-plate">ABC 123</div>
+      </div>
+      <div id="rego-details"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN ══ -->
+<div class="page" id="pg-admin">
+  <div class="admin-top-bar">
+    <button class="back-btn" onclick="goBack('pg-home')">‹</button>
+    <h2>Edit Profile &amp; Licence</h2>
+  </div>
+  <div class="admin-scroll">
+    <div class="admin-group">
+      <div class="ag-title">Personal Info</div>
+      <div class="af"><label>First Name</label><input id="a-first" type="text" placeholder="First name"></div>
+      <div class="af"><label>Middle Initial</label><input id="a-mid" type="text" placeholder="e.g. A"></div>
+      <div class="af"><label>Last Name</label><input id="a-last" type="text" placeholder="Last name"></div>
+      <div class="af"><label>Date of Birth</label><input id="a-dob" type="text" placeholder="e.g. 23/10/07"></div>
+    </div>
+    <div class="admin-group">
+      <div class="ag-title">Permit Details</div>
+      <div class="af"><label>Permit / Licence Number</label><input id="a-permitno" type="text" placeholder="e.g. 72970413"></div>
+      <div class="af"><label>Card Number</label><input id="a-cardno" type="text" placeholder="e.g. 4729183"></div>
+      <div class="af"><label>Permit Type</label>
+        <select id="a-type"><option value="Car P">Car P (Probationary)</option><option value="Car">Car (Full)</option><option value="Motorcycle P">Motorcycle P</option><option value="Motorcycle">Motorcycle</option></select>
+      </div>
+      <div class="af"><label>Proficiency</label>
+        <select id="a-prof"><option value="Probationary">Probationary</option><option value="Full">Full</option><option value="Learner">Learner</option></select>
+      </div>
+      <div class="af"><label>Issue Date</label><input id="a-issue" type="text" placeholder="e.g. 23/10/25"></div>
+      <div class="af"><label>Expiry Date</label><input id="a-expiry" type="text" placeholder="e.g. 23/10/29"></div>
+    </div>
+    <div class="admin-group">
+      <div class="ag-title">Address</div>
+      <div class="af"><label>Full Address</label><input id="a-addr" type="text" placeholder="e.g. 829 fourteenth street Mildura 3500 VIC"></div>
+    </div>
+    <div class="admin-group">
+      <div class="ag-title">Registration</div>
+      <div class="af"><label>Licence Plate</label><input id="a-plate" type="text" placeholder="e.g. ABC 123"></div>
+      <div class="af"><label>Vehicle</label><input id="a-vehicle" type="text" placeholder="e.g. 2022 Toyota Camry"></div>
+      <div class="af"><label>Rego Expiry</label><input id="a-regoexp" type="text" placeholder="e.g. 14/11/25"></div>
+      <div class="af"><label>Demerit Points</label><input id="a-demerits" type="number" placeholder="e.g. 2" min="0" max="12"></div>
+    </div>
+    <div class="admin-group">
+      <div class="ag-title">Photo &amp; Signature</div>
+      <div class="upload-row">
+        <div class="ur-left">
+          <div id="photo-preview-wrap"><div class="ur-placeholder">👤</div></div>
+          <div class="ur-text"><div class="ut-title">Profile Photo</div><div class="ut-sub">Shown on your licence</div></div>
+        </div>
+        <label class="ul-btn">Upload<input type="file" accept="image/*" onchange="handleUpload(event,'photo')"></label>
+      </div>
+      <div class="upload-row">
+        <div class="ur-left">
+          <div id="sig-preview-wrap"><div class="ur-placeholder">✍</div></div>
+          <div class="ur-text"><div class="ut-title">Signature</div><div class="ut-sub">Shown on your licence</div></div>
+        </div>
+        <label class="ul-btn">Upload<input type="file" accept="image/*" onchange="handleUpload(event,'sig')"></label>
+      </div>
+    </div>
+    <button class="save-btn" onclick="saveAdmin()">Save &amp; Update Licence</button>
+  </div>
+</div>
+
+</div><!-- /phone -->
+<div class="toast" id="toast">✓ Saved — licence updated</div>
+
+<script>
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+const D = {
+  pin:'',
+  cardVisible:false,
+  qrRevealed:false,
+  qrSecs:104,
+  qrInterval:null,
+  curPage:'pg-pin',
+  prevPage:'pg-home',
+  curSeg:'permit',
+  p:{
+    first:'', mid:'', last:'',
+    dob:'', permitNo:'', cardNo:'',
+    type:'Car P', prof:'Probationary',
+    issue:'', expiry:'',
+    addr:'',
+    plate:'ABC 123', vehicle:'2022 Toyota Camry', regoExp:'14/11/25',
+    demerits:2,
+    photo:null, sig:null
+  }
+};
+
+// ═══════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════
+function tick(){
+  const n=new Date();
+  const t=n.getHours()+':'+(n.getMinutes()<10?'0':'')+n.getMinutes();
+  document.getElementById('sb-time').textContent=t;
+}
+tick(); setInterval(tick,15000);
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+function goPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  D.prevPage=D.curPage;
+  D.curPage=id;
+}
+function goBack(id){ goPage(id); }
+
+function goBotNav(tab){
+  const ids={home:'pg-home',vehicles:'pg-rego',licence:'pg-licence',payments:'pg-home',profile:'pg-admin'};
+  document.querySelectorAll('.bn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('bn-'+tab)?.classList.add('on');
+  goPage(ids[tab]||'pg-home');
+  if(ids[tab]==='pg-licence') openLicence();
+}
+
+function goDemerit(){ goPage('pg-demerit'); updateDemeritPage(); }
+function goRego(){ goPage('pg-rego'); renderRego(); }
+function goLicence(){ openLicence(); }
+function goAdmin(){ populateAdmin(); goPage('pg-admin'); }
+
+// ═══════════════════════════════════════
+// PIN
+// ═══════════════════════════════════════
+function pp(d){
+  if(D.pin.length>=6) return;
+  D.pin+=d;
+  updateDots();
+  if(D.pin.length===6) setTimeout(unlock,300);
+}
+function pd(){
+  D.pin=D.pin.slice(0,-1);
+  updateDots();
+}
+function updateDots(){
+  for(let i=0;i<6;i++){
+    const el=document.getElementById('dot'+i);
+    if(el) el.classList.toggle('on',i<D.pin.length);
+  }
+}
+function unlock(){
+  D.pin='';
+  updateDots();
+  goPage('pg-home');
+  updateHomeGreeting();
+  buildVicWatermarks();
+  buildBarcode();
+}
+
+// ═══════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════
+function updateHomeGreeting(){
+  const n=D.p.first||'there';
+  const cap=n.charAt(0).toUpperCase()+n.slice(1).toLowerCase();
+  document.getElementById('home-greeting').textContent='Hi '+cap;
+}
+
+// ═══════════════════════════════════════
+// LICENCE
+// ═══════════════════════════════════════
+function openLicence(){
+  updateLicenceFields();
+  setRefreshTime();
+  D.qrRevealed=false;
+  resetQRPanel();
+  goPage('pg-licence');
+  // scroll to top
+  const s=document.getElementById('lic-scroll');
+  if(s) s.scrollTop=0;
+}
+
+function setRefreshTime(){
+  const n=new Date();
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const str=days[n.getDay()]+', '+n.getDate()+' '+months[n.getMonth()]+' '+n.getFullYear()+' at '+n.getHours()+':'+(n.getMinutes()<10?'0':'')+n.getMinutes();
+  document.getElementById('lic-refresh-time').textContent='Last refreshed: '+str;
+}
+
+function handleLicScroll(el){
+  if(el.scrollTop===0){
+    setRefreshTime();
+  }
+}
+
+function updateLicenceFields(){
+  const p=D.p;
+  const fullName=[p.first,p.mid,p.last].filter(Boolean).join(' ');
+
+  // Names
+  document.getElementById('tb-name').textContent=fullName||'—';
+  document.getElementById('ti-name').textContent=fullName||'—';
+
+  // permit details
+  document.getElementById('tb-permitno').textContent=p.permitNo||'—';
+  document.getElementById('tb-expiry').textContent=p.expiry||'—';
+  document.getElementById('tb-expiry2').textContent=p.expiry||'—';
+  document.getElementById('tb-dob').textContent=p.dob||'—';
+  document.getElementById('tb-issuedate').textContent=p.issue||'—';
+  document.getElementById('tb-proficiency').textContent=p.prof||'Probationary';
+
+  // type
+  const typeBase=p.type.replace(' P','');
+  document.getElementById('tb-type').innerHTML=typeBase+' <span class="p-badge">P</span>';
+
+  // address
+  document.getElementById('tb-addr').textContent=p.addr||'—';
+  document.getElementById('ti-addr').textContent=p.addr||'—';
+
+  // card number
+  D.cardVisible=false;
+  const masked='*'.repeat(p.cardNo?p.cardNo.length:7);
+  document.getElementById('tb-cardnum').textContent=masked;
+
+  // licence header title
+  const profLabel=(p.prof||'PROBATIONARY').toUpperCase();
+  document.getElementById('lic-red-title').textContent=profLabel+' DRIVER LICENCE';
+
+  // photo
+  const wrap=document.getElementById('lic-photo-wrap');
+  const ph=document.getElementById('lic-photo-placeholder');
+  // remove old img if any
+  const oldImg=wrap.querySelector('img.lic-photo-img');
+  if(oldImg) oldImg.remove();
+  if(p.photo){
+    ph.style.display='none';
+    const img=document.createElement('img');
+    img.className='lic-photo-img';
+    img.src=p.photo;
+    img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;';
+    wrap.insertBefore(img,wrap.firstChild);
+  } else {
+    ph.style.display='';
+  }
+
+  // signature
+  ['tb-sig-wrap','ti-sig-wrap'].forEach(id=>{
+    const w=document.getElementById(id);
+    if(!w) return;
+    if(p.sig){
+      w.innerHTML='<img src="'+p.sig+'" style="max-height:52px;">';
+    } else {
+      w.innerHTML='<span class="nosig">No signature uploaded</span>';
+    }
+  });
+
+  // age
+  let ageLabel='Over 18';
+  if(p.dob){
+    const parts=p.dob.match(/(\d+)\/(\d+)\/(\d+)/);
+    if(parts){
+      let yr=parseInt(parts[3]);
+      if(yr<100) yr+=2000;
+      const bd=new Date(yr,parseInt(parts[2])-1,parseInt(parts[1]));
+      const now=new Date();
+      let age=now.getFullYear()-bd.getFullYear();
+      if(now<new Date(now.getFullYear(),bd.getMonth(),bd.getDate())) age--;
+      ageLabel=age>=18?'Over 18':'Under 18';
+    }
+  }
+  document.getElementById('age-label').textContent=ageLabel;
+}
+
+// ═══════════════════════════════════════
+// SEGMENT TABS
+// ═══════════════════════════════════════
+function switchSeg(tab){
+  D.curSeg=tab;
+  ['permit','identity','age'].forEach(t=>{
+    document.getElementById('seg-'+t).classList.toggle('on',t===tab);
+    document.getElementById('tab-'+t).style.display=t===tab?'block':'none';
+  });
+}
+
+// ═══════════════════════════════════════
+// CARD NUM TOGGLE
+// ═══════════════════════════════════════
+function toggleCardNum(){
+  D.cardVisible=!D.cardVisible;
+  const el=document.getElementById('tb-cardnum');
+  if(D.cardVisible){
+    el.textContent=D.p.cardNo||'—';
+  } else {
+    el.textContent='*'.repeat(D.p.cardNo?D.p.cardNo.length:7);
+  }
+}
+
+// ═══════════════════════════════════════
+// QR CODE
+// ═══════════════════════════════════════
+function resetQRPanel(){
+  const panel=document.getElementById('qr-panel');
+  panel.innerHTML='<p>Presenting a QR code allows your driver licence information to be scanned and shared.</p><p class="consent-q">Do you consent to share your information?</p><button class="reveal-btn" onclick="revealQR()">Reveal QR code</button>';
+  if(D.qrInterval){ clearInterval(D.qrInterval); D.qrInterval=null; }
+  D.qrSecs=104;
+}
+
+function revealQR(){
+  D.qrRevealed=true;
+  const panel=document.getElementById('qr-panel');
+  panel.innerHTML='<div class="qr-code-box"><canvas id="qr-mini-canvas" width="110" height="110"></canvas><div class="qr-exp">QR expires <span id="qr-mini-timer">01:44</span></div></div>';
+  drawQR('qr-mini-canvas',110);
+  startQRTimer('qr-mini-timer');
+}
+
+function openFullQR(){
+  goPage('pg-qr');
+  drawQR('qr-full-canvas',260);
+  D.qrSecs=104;
+  if(D.qrInterval) clearInterval(D.qrInterval);
+  startQRTimer('qr-timer-big');
+}
+
+function closeQR(){
+  goPage('pg-licence');
+}
+
+function startQRTimer(elId){
+  if(D.qrInterval) clearInterval(D.qrInterval);
+  const update=()=>{
+    const el=document.getElementById(elId);
+    if(!el){ clearInterval(D.qrInterval); return; }
+    const m=Math.floor(D.qrSecs/60);
+    const s=D.qrSecs%60;
+    el.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+    if(D.qrSecs<=0){ clearInterval(D.qrInterval); return; }
+    D.qrSecs--;
+  };
+  update();
+  D.qrInterval=setInterval(update,1000);
+}
+
+function drawQR(canvasId,size){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  canvas.width=size; canvas.height=size;
+  ctx.fillStyle='#fff';
+  ctx.fillRect(0,0,size,size);
+  // Draw a realistic QR pattern
+  ctx.fillStyle='#000';
+  const cell=Math.floor(size/25);
+  // seed based on permit number for consistency
+  const seed=(D.p.permitNo||'12345678').split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  function seededRand(i){ return ((seed*1103515245+i*12345)&0x7fffffff)%100; }
+  let idx=0;
+  for(let r=0;r<25;r++){
+    for(let c=0;c<25;c++){
+      // finder patterns (top-left, top-right, bottom-left)
+      const inFinder=(r<7&&c<7)||(r<7&&c>17)||(r>17&&c<7);
+      let fill=false;
+      if(inFinder){
+        // draw finder squares
+        if(r<7&&c<7) fill=finderCell(r,c);
+        else if(r<7&&c>17) fill=finderCell(r,c-18);
+        else if(r>17&&c<7) fill=finderCell(r-18,c);
+      } else {
+        fill=seededRand(idx++)>50;
+      }
+      if(fill){
+        ctx.fillRect(c*cell,r*cell,cell,cell);
+      }
+      idx++;
+    }
+  }
+}
+function finderCell(r,c){
+  if(r===0||r===6||c===0||c===6) return true;
+  if(r>=2&&r<=4&&c>=2&&c<=4) return true;
+  return false;
+}
+
+// ═══════════════════════════════════════
+// VICTORIA WATERMARKS
+// ═══════════════════════════════════════
+function buildVicWatermarks(){
+  const wrap=document.getElementById('vic-watermarks');
+  if(!wrap) return;
+  // 3 semi-transparent Victoria coat of arms SVG
+  const crest=`<svg viewBox="0 0 60 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="30" cy="28" rx="18" ry="22" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none"/>
+    <path d="M20 20 C20 10 40 10 40 20 L38 40 C38 48 22 48 22 40 Z" stroke="rgba(255,255,255,0.5)" stroke-width="1" fill="rgba(255,255,255,0.08)"/>
+    <circle cx="30" cy="18" r="4" stroke="rgba(255,255,255,0.5)" stroke-width="1" fill="none"/>
+    <line x1="22" y1="28" x2="38" y2="28" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+    <path d="M24 32 Q30 36 36 32" stroke="rgba(255,255,255,0.4)" stroke-width="1" fill="none"/>
+    <text x="30" y="56" text-anchor="middle" font-size="7" fill="rgba(255,255,255,0.45)" font-family="serif" font-style="italic">VICTORIA</text>
+  </svg>`;
+  wrap.innerHTML='';
+  for(let i=0;i<3;i++){
+    const d=document.createElement('div');
+    d.className='vic-wm';
+    d.innerHTML=crest;
+    d.style.transform=`rotate(${i*15-10}deg) scale(${0.9+i*0.15})`;
+    d.style.position='absolute';
+    d.style.left=(5+i*28)+'%';
+    d.style.top=(10+i*10)+'%';
+    wrap.appendChild(d);
+  }
+}
+
+// ═══════════════════════════════════════
+// BARCODE
+// ═══════════════════════════════════════
+function buildBarcode(){
+  const svg=document.getElementById('barcode-svg');
+  if(!svg) return;
+  const seed=(D.p.permitNo||'72970413').split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  let x=4; let out='';
+  for(let i=0;i<80;i++){
+    const w=1+((seed*(i+1)*7)%3);
+    if(i%2===0) out+=`<rect x="${x}" y="4" width="${w}" height="50" fill="#000"/>`;
+    x+=w+1;
+  }
+  svg.innerHTML=out;
+}
+
+// ═══════════════════════════════════════
+// DEMERIT
+// ═══════════════════════════════════════
+function updateDemeritPage(){
+  const d=parseInt(D.p.demerits)||2;
+  const el=document.getElementById('demerit-count');
+  const msg=document.getElementById('demerit-msg');
+  if(el) el.textContent=d;
+  if(msg) msg.textContent='You currently have '+d+' demerit point'+(d!==1?'s':'')+'. Keep up the safe driving!';
+}
+
+// ═══════════════════════════════════════
+// REGO
+// ═══════════════════════════════════════
+function renderRego(){
+  const p=D.p;
+  const plate=document.getElementById('rego-plate');
+  if(plate) plate.textContent=p.plate||'—';
+  const det=document.getElementById('rego-details');
+  if(!det) return;
+  const rows=[
+    ['Vehicle',p.vehicle||'—'],
+    ['Rego Expiry',p.regoExp||'—'],
+    ['Status','Current ✓']
+  ];
+  det.innerHTML=rows.map(([l,v])=>`
+    <div style="padding:13px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;">
+      <span style="font-size:14px;color:var(--muted);">${l}</span>
+      <span style="font-size:14px;font-weight:700;${l==='Status'?'color:var(--green);':''}">${v}</span>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════
+function populateAdmin(){
+  const p=D.p;
+  const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.value=v||''; };
+  set('a-first',p.first); set('a-mid',p.mid); set('a-last',p.last);
+  set('a-dob',p.dob); set('a-permitno',p.permitNo); set('a-cardno',p.cardNo);
+  set('a-issue',p.issue); set('a-expiry',p.expiry); set('a-addr',p.addr);
+  set('a-plate',p.plate); set('a-vehicle',p.vehicle); set('a-regoexp',p.regoExp);
+  set('a-demerits',p.demerits);
+  // type & prof
+  const typeEl=document.getElementById('a-type');
+  if(typeEl){ for(let o of typeEl.options){ if(o.value===p.type){ o.selected=true; break; } } }
+  const profEl=document.getElementById('a-prof');
+  if(profEl){ for(let o of profEl.options){ if(o.value===p.prof){ o.selected=true; break; } } }
+  // photo preview
+  if(p.photo){
+    document.getElementById('photo-preview-wrap').innerHTML=`<img class="ur-thumb" src="${p.photo}">`;
+  }
+  if(p.sig){
+    document.getElementById('sig-preview-wrap').innerHTML=`<img class="ur-sig" src="${p.sig}">`;
+  }
+}
+
+function handleUpload(e,field){
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    D.p[field]=ev.target.result;
+    if(field==='photo'){
+      document.getElementById('photo-preview-wrap').innerHTML=`<img class="ur-thumb" src="${ev.target.result}">`;
+    } else {
+      document.getElementById('sig-preview-wrap').innerHTML=`<img class="ur-sig" src="${ev.target.result}">`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveAdmin(){
+  const g=(id)=>{ const el=document.getElementById(id); return el?el.value.trim():''; };
+  D.p.first=g('a-first'); D.p.mid=g('a-mid'); D.p.last=g('a-last');
+  D.p.dob=g('a-dob'); D.p.permitNo=g('a-permitno'); D.p.cardNo=g('a-cardno');
+  D.p.type=g('a-type'); D.p.prof=g('a-prof');
+  D.p.issue=g('a-issue'); D.p.expiry=g('a-expiry');
+  D.p.addr=g('a-addr');
+  D.p.plate=g('a-plate'); D.p.vehicle=g('a-vehicle'); D.p.regoExp=g('a-regoexp');
+  D.p.demerits=parseInt(g('a-demerits'))||0;
+  updateHomeGreeting();
+  showToast('✓ Saved — licence updated');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ═══════════════════════════════════════
+// KEYBOARD PIN SUPPORT
+// ═══════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(D.curPage==='pg-pin'){
+    if(e.key>='0'&&e.key<='9') pp(e.key);
+    else if(e.key==='Backspace') pd();
+  }
+});
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+// Start on PIN page — already shown
+// Set initial tab
+switchSeg('permit');
+</script>
+</body>
+</html>
