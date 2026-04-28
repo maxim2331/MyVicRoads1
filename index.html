@@ -6,61 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="myVicRoads">
-<link id="apple-touch-icon" rel="apple-touch-icon" href="">
-<title>myVicRoads</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script>
-// Generate the VicRoads-style icon as a canvas PNG and set it as the apple-touch-icon
-(function(){
-  const c=document.createElement('canvas');
-  c.width=180;c.height=180;
-  const ctx=c.getContext('2d');
-  // White rounded background
-  const r=36;
-  ctx.beginPath();
-  ctx.moveTo(r,0);ctx.lineTo(180-r,0);ctx.quadraticCurveTo(180,0,180,r);
-  ctx.lineTo(180,180-r);ctx.quadraticCurveTo(180,180,180-r,180);
-  ctx.lineTo(r,180);ctx.quadraticCurveTo(0,180,0,180-r);
-  ctx.lineTo(0,r);ctx.quadraticCurveTo(0,0,r,0);
-  ctx.closePath();
-  ctx.fillStyle='#fff';ctx.fill();
-  ctx.clip();
-
-  // Draw the VicRoads N-arrow logo shape
-  // Left green band (diagonal)
-  ctx.save();
-  const g1=ctx.createLinearGradient(20,20,90,160);
-  g1.addColorStop(0,'#4caf50');g1.addColorStop(1,'#2e7d32');
-  ctx.fillStyle=g1;
-  ctx.beginPath();
-  ctx.moveTo(25,155);ctx.lineTo(65,25);ctx.lineTo(100,25);ctx.lineTo(60,155);
-  ctx.closePath();ctx.fill();
-  ctx.restore();
-
-  // Right grey/dark band
-  ctx.save();
-  const g2=ctx.createLinearGradient(90,20,160,160);
-  g2.addColorStop(0,'#9e9e9e');g2.addColorStop(1,'#616161');
-  ctx.fillStyle=g2;
-  ctx.beginPath();
-  ctx.moveTo(80,155);ctx.lineTo(155,25);ctx.lineTo(155,155);
-  ctx.closePath();ctx.fill();
-  ctx.restore();
-
-  // Middle green overlap band
-  ctx.save();
-  const g3=ctx.createLinearGradient(70,20,130,160);
-  g3.addColorStop(0,'#66bb6a');g3.addColorStop(1,'#388e3c');
-  ctx.fillStyle=g3;
-  ctx.beginPath();
-  ctx.moveTo(58,155);ctx.lineTo(105,25);ctx.lineTo(130,25);ctx.lineTo(83,155);
-  ctx.closePath();ctx.fill();
-  ctx.restore();
-
-  // Set as apple touch icon
-  document.getElementById('apple-touch-icon').href=c.toDataURL('image/png');
-})();
-</script>
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAE4UlEQVR4nO3aPbLrRBRF4S0X8yFgHFTBcJwQkNzhQBXjIGBEIqB8uT+S3ZL6dJ/evb7wBpKDVfsdu96ijtZ1XXu+H3GWZVm6vLfVi4gXLSIPfQERY09U3CEPJWSUqh121YcRMs6qFXaVhxAyarka9u3qByBm1HS1p0tBEzMiXOnq1LwTMlo5eoIcXmhiRktHezsUNDGjhyPdFQdNzOiptL+ioIkZGZR0+DJoYkYmr3q8/Ds0kMnToFlnZPSsy92giRmZ7fW5GTQxYwRbnXJDw8q3oFlnjORrryw0rHwKmnXGiD52+0PPD9LDj7/9FPbsf37/+9vffv7z17D3bfnrlz+avu+s+/2ut7e36s99X2jWGSN79DvVDc0653C/38OePVXQ8HeTODfQTuQ6r+u6stCwMk3Q3M/9Ra7zwzRBYw4EjSZarLMk3Wb4Qsi5MQ8WGuFarbNE0DBD0AjVcp2lCYLmfp6LfdDop/U6SwQNMwSNED3WWTIPmvt5PtZBo49e6ywRNMzYBs250UfPdZaMg8acCBrV9F5niaBhxjJo7uf2MqyzZBo05kXQuCzLOkuGQXNuzM0uaLSVaZ0lgoYZgsZp2dZZMgua+xlWQaOdjOssETTMEHSBrXOjtUznRtZ1loyCjryft7S+n1HGJmi0kXmdJYKGGYI2M/M6SwmD5n7GFemCxnmzr7NE0DCTKmjOjfNY5/+kChq4iqANsM7/I2hYSRM09/M5rPNnaYIGaiDogbHO36UImnMDtaQIGsexztsIGlYIekCs877uQXM/o6buQeMY1vk5goYV26C3zo3Wap8brPNrXYOOvJ+3tL6f0Z7tQrthncsQNKx0C5qf68qxzuVYaFgh6ORY52MIGla6BM39XIZ1Po6FhhWCTop1Pqd50JwbiMRCJ8Q6n0fQsELQybDO1zQNmvsZ0VjoRFjn6wgaVpoFzbnxHOtcBwsNKwSdAOtcD0HDSpOguZ/3sc51sdCwQtAdsc71ETSs3JZlWSJfwP28jXWOwULDCkF3wDrHCQ2acwOtsdCNsc6xbpIU/cUQaGFZloWFboh1jhcWNPczengPmrMjFusc69Hvp4jXdV37fBzgmkfQt60/AiP52C1fCmHlW9CsNEbytVcWGlY2g2alMYKtTncXmqiR2V6fT08OokZGz7rkhoaVl0Gz0sjkVY9FC03UyKCkw+KTg6jRU2l/h25ookYPR7o7/KWQqNHS0d4uxcn/zkOUs8N56Wc71hoRrnR1+XdookZNV3uqGiMnCM6qNYwh60rYKFX7X/jQc4GwsSfqVG12/xI3Wnzf+heYpPbZVyGSKQAAAABJRU5ErkJggg==">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
